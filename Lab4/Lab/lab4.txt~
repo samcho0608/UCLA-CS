@@ -1,0 +1,95 @@
+Sungmin Cho
+205124669
+Assignment 4
+Lab
+-------------
+
+I first used ./configure -prefix= command to configure the file.
+I tried building the file using the make command to build but
+was struck with an error with regards to the utimencmp.c file.
+
+    error:conflicting types for 'futimens'
+    int futimens (int, char const *, struct timespec const [2]);
+
+The error in the build process occurred because there was no
+interface to set file timestamps, which is futimes in the
+original. 
+
+I downloaded the patch file and patched using the following codes:
+  wget https://web.cs.ucla.edu/classes/winter20/cs35L/assign/coreutils.diff
+  patch -p0 < coreutils.diff
+
+The patch renamed this part of the code to
+coreutils_futimens, which is one of declared commands that can
+utilized.
+
+-------------
+
+I employed the code specified in the spec to reproduce the erroneous output,
+resulting in the following output:
+
+-rw-r--r-- 1 classnho class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 classnho class 0 2020-02-09 04:53:30.817088730 +0000 now1
+-rw-r--r-- 1 classnho class 0 2020-02-09 04:53:10.441462408 +0000 now
+
+-------------
+
+I ran gdb on the ls file with the following code to examine:
+
+gdb ~/CS35L/Lab4/Lab/coreutils-with-bug/src/ls
+
+to get the information of the function it employs:
+
+(gdb) info functions
+
+which showed me a function named compare_mtime, which seems to be comparing the
+modification times of the files. Thus, I put a breakpoint there with the following
+code.
+
+(gdb) break compare_mtime
+(gdb) r ~/$tmp -lt
+
+After Ihit the breakpoint, I used stepi command on gdb to examine it step by step.
+The function makes a call to another function named timespec_cmp so I decided to
+examine that function, too, which is the following:
+
+timespec_cmp (b=..., a=...) at ../lib/timespec.h:49
+
+timespec_cmp ( struct timespec a, struct timespec b)
+{
+	int diff = a.tv_sec - b.tv_sec;
+	return diff ? diff : a.tv_nsec - b.tv_nsec;
+}
+
+The function above utilizes difference in int values to compare, which means that
+there is a possibility of overflow because there is limited memory(knowledge from
+CS33 course).
+
+I copied the file specified and then modified it to the following to account for
+the overflow:
+
+timespec_cmp ( struct timespec a, struct timespec b)
+{
+	return (a.tv_sec > b.tv_sec) ? 1 : (a.tv_sec < b.tv_sec) ? -1 : a.tv_nsec - b.tv_nsec;
+}
+
+Then I used:
+
+diff -u lib/timespec.h timespec.h > lab4.diff
+emacs lab4.diff
+
+to first create the diff file between the two files and then access the diff file to change
+timespec.h to lib/timespec.h to ascertain that patch command will modify the right file.
+
+Then, I used the following command to patch the diff:
+
+patch -p0 < lab4.diff
+make
+
+---------------
+
+After doing so, I reused the code from the example which resulted in the following output:
+total 0
+-rw-r--r-- 1 classnho class 0 2020-02-09 04:53:30.817088730 +0000 now1
+-rw-r--r-- 1 classnho class 0 2020-02-09 04:53:10.441462408 +0000 now
+-rw-r--r-- 1 classnho class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice

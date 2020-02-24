@@ -1,0 +1,124 @@
+Sungmin Cho
+205124669
+Assignment 1
+Lab 1
+------------
+
+1. man -k [COMMAND]
+
+2. which mv sh
+
+   Shell Commands:
+   man which
+
+3. The following are the command that are only two characters long and end with character r: tr, ar, pr.
+   tr translates or deletes characters.
+   ar creates, extracts, or modifies from archives.
+   pr converts text files for printing.
+   
+   Shell Commands:
+   find /usr/bin -name '?r'
+   man -a ?r
+
+4. /usr/bin/emacs-24.3
+   man ls
+   man readlink
+
+5. /usr/bin/gcc is version 4.8.5 while plain gcc is version 9.2.0. 
+   
+   WHY ARE THEY DIFFERENT PROGRAMS?
+       Different gcc files can be found in different paths. In this example, they are different file ultimately hence why the version number differs. The plain gcc was updated but /usr/bin/gcc was not.
+
+6. The symbolic mode u+sx gives user the permission to set user ID on execution and to execute. The symbolic mode o-w rids the writing permission of those not in the user group. 
+
+   Shell Command:
+   	 man chmod
+7. 
+   There are total 101 directories under the directory /usr/local/cs that were modified in the last four weeks.
+
+   The first five are:
+       /usr/local/cs
+       /usr/local/cs/src/grep
+       /usr/local/cs/src/grep/RCS
+       /usr/local/cs/share/info
+       /usr/local/cs/share/man/man1
+       	  
+
+   Shell Commands:
+     	  man find
+      	  find /usr/local/cs -type d -mtime -28 | wc -l
+	  find /usr/local/cs -type d -mtime -28
+
+8. There are total 280 symbolic links under the same directory as find.
+   
+   Shell Commands:
+   	 man wc
+	 man find
+	 whereis find
+	 find /usr/bin -type -l | wc -l
+9. 
+   The oldest regular file in the /usr/lib64 directory is librom1394.so.0.3.0.
+   
+   Shell Commands:
+   	 man ls
+	 ls -lat
+10.
+   The locale command gets its data from the directory /usr/lib/locale/locale-archive.
+   	
+   Shell Commands:
+   	 man locale
+	 man -a locale
+11.
+   The following are the two commands with "downcase" in their name:
+         downcase-region
+	 downcase-word
+
+   Shell Commands:
+   	 C-h a
+12.
+	C-M-r: Do incremental search backward for regular expression(command: isearch-backward-regexp).
+	C-M-s: Do incremental search forward for regular expression(command: isearch-forward-regexp).
+	C-M-t: Run the command transpose-sexps
+	C-M-u: Move backward out of one level of parentheses(command: backward-up-list)
+	C-M-v: Scroll next window upward argument number of lines or near full screen if no argument specified(command: scroll-other-window).
+
+	Emacs Commands:   
+	      C-h k C-M-r
+	      C-h k C-M-s
+	      C-h k C-M-t
+	      C-h k C-M-u
+	      C-h k C-M-v
+13.
+Quitting with 'C-g' is the way to get rid of a partially typed
+command, or a numeric argument that you don't want.  Furthermore, if you
+are in the middle of a command that is running, 'C-g' stops the command
+in a relatively safe way.  For example, if you quit out of a kill
+command that is taking a long time, either your text will _all_ still be
+in the buffer, or it will _all_ be in the kill ring, or maybe both.  If
+the region is active, 'C-g' deactivates the mark, unless Transient Mark
+mode is off (*note Disabled Transient Mark::).  If you are in the middle
+of an incremental search, 'C-g' behaves specially; it may take two
+successive 'C-g' characters to get out of a search.  *Note Incremental
+Search::, for details.
+
+
+	Emacs Commands:
+	      C-h K C-g
+	      C-SPC
+	      M-w
+	      C-y
+
+14. The Emacs command yank is used to reinsert("paste") the last stretch of killed text and is called with keystroke C-y
+    	
+	Emacs Commands: 
+	      C-h k yank
+ 
+15. 
+    While ls -l only outputs the list of the files in /usr/bin directory, dired allows the programmer to operate on the directories that are marked/flagged. Moreover, while ls -l does not show any hidden files, emacs dired does.
+
+    	Shell/Emacs Commands:
+	ls -l /usr/bin
+	emacs
+	C-h r
+	C-s
+	C-x d

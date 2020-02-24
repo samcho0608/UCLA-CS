@@ -1,0 +1,39 @@
+#! /bin/env bash
+
+# delete '?', '<u>', '</u>', and '<br>'
+sed -E 's/\?|<u>|<\/u>|<br>//g' $1 |
+
+# delete '\n' from English lines that wrap to a new line
+sed -E '/[^>]$/{N; s/\n//;}' |
+
+sed -E '/[^>]$/{N; s/\n//;}' |
+
+# extract all lines with <td> tags
+grep -E "<td[^>]*>" |
+
+# delete the HTML lines at the top
+sed '1,4d' |
+
+# delete every other line starting from line 2
+sed '2~2d' |
+
+# delete all tags
+sed -E 's/<[^>]*>//g' |
+
+# translate all ` characters to ' characters
+tr \` \' |
+
+# translate all uppercase characters to lowercase
+tr [:upper:] [:lower:] |
+
+# translate all comma, space, and dash to newline characters
+tr '[, \-]' '\n' |
+
+# delete all empty lines
+sed '/^$/d' |
+
+# delete all characters that are not Hawaiian alphabets
+sed -E "s/[^pk\'mnwlhaeiou]//g" |
+
+# delete out all the duplicates
+sort -u

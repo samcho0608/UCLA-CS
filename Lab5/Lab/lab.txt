@@ -1,0 +1,352 @@
+Name: Sungmin Cho
+UCID: 205124669
+Assignment 5
+Lab
+-----------------
+
+==========================================
+                  lab.txt
+==========================================
+
+1. 
+
+First, I wrote tr2b.c using the following
+code at the top. 
+
+int main(int argc, const char** argv)
+{
+    const char* from = argv[0];
+    const char* to = argv[1];
+    char c;
+    int i;
+
+to point at the first and the second argument.
+Then I employed the follwoing code to first
+check for duplicates.
+
+char unique;
+int count, j;
+for(i = 0; from[i] != '\0'; i++)
+{
+  count = 0;
+  unique = from[i];
+  for(j = 0; from[j] != '\0'; j++)
+    if(unique == from[j])
+        count++;
+    if(count > 1)
+      {
+        fprintf(stderr, "Duplicate detected.\n");
+        exit(1);
+      }
+}
+
+The following code was used to translate the from
+argument to the corresponding to argument.
+
+while(!feof(stdin))
+    {
+       c = getchar();
+       for(i = 0; from[i] != '\0'; i++)
+       {
+           if(c == from[i])
+            c = to[i];
+       }
+       putchar(c);
+       if(ferror(stdout))
+       {
+           fprintf(stderr,"Error with character output.\n");
+           exit(1);
+       }
+    }
+
+-----------------
+
+However, the output was not printed out correctly
+with this code so I checked the arguments using
+for loop.
+
+for(i = 0; i < argc; i++)
+  for(j = 0; argv[i][j] != '\0'; j++)
+    printf("%c", argv[i][j]);
+
+which allowed me to realize that argv[0] actually
+is the name of the program running.
+
+Thus I changed from and to arrays to the following:
+
+    const char* from = argv[1];
+    const char* to = argv[2];
+
+which resulted in correct output on the kernel.
+
+-----------------
+
+Based on the interpretation of tr2b code, 
+came up with the following:
+
+while(read(stdin, c, 1) > 0)
+    {
+        for(i = 0; from[i] != '\0'; i++)
+        {
+            if(*c == from[i])
+                *c = to[i];
+        }
+        write(stdout, c, 1);
+    }
+
+This code, instead of taking an input,
+this program exited automatically.
+
+The issue was that I used stdin and
+stdout instead of file descriptor.
+I changed the stdin and stdout to
+the corresponding file descriptors.
+
+while(read(0, c, 1) > 0)
+    {
+        for(i = 0; from[i] != '\0'; i++)
+        {
+            if(*c == from[i])
+                *c = to[i];
+        }
+        write(1, c, 1);
+    }
+
+However, this only printed out
+segmentation fault, which was
+a memory allocation issue.
+
+I did not allocate any from the beginning
+so I changed the char* c code to the
+following:
+
+
+    char* c = (char*)malloc(sizeof(char));
+
+which allowed the program to run perfectly.
+
+-----------------
+
+For the file of at least 5,000,000 kilobytes,
+I created a file check, which is a file with
+the content of words file from lab2 written twice.
+-----------------
+Using the strace command, I obtained the following
+result when copying the content of one file to
+another.
+
+The following result is from the process using tr2b:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 62.39    0.002390           2      1210           write
+ 28.90    0.001107           1      1212           read
+  2.79    0.000107          12         9           mmap
+  1.57    0.000060          15         4           mprotect
+  0.97    0.000037           9         4           fstat
+  0.78    0.000030          15         2           open
+  0.65    0.000025          25         1           execve
+  0.60    0.000023          23         1           munmap
+  0.42    0.000016          16         1           brk
+  0.39    0.000015          15         1         1 access
+  0.37    0.000014           7         2           close
+  0.18    0.000007           7         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.003831                  2448         1 total
+
+-----------------
+The following result is from the process using tr2u:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 54.90   50.736369           5   9907360           write
+ 45.10   41.679026           4   9907362           read
+  0.00    0.000098          14         7           mmap
+  0.00    0.000065          16         4           mprotect
+  0.00    0.000033           8         4           brk
+  0.00    0.000030          15         2           open
+  0.00    0.000023          23         1           munmap
+  0.00    0.000015           8         2           fstat
+  0.00    0.000014           7         2           close
+  0.00    0.000014          14         1         1 access
+  0.00    0.000014          14         1           execve
+  0.00    0.000007           7         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   92.415708              19814747         1 total
+
+-----------------
+Next I did the same thing, except I printed the
+translated file to kernel.
+
+The following is the result from the process using tr2b:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 99.87    5.497651           6    959657           write
+  0.13    0.006904           6      1212           read
+  0.00    0.000063           7         9           mmap
+  0.00    0.000036           9         4           mprotect
+  0.00    0.000023           6         4           fstat
+  0.00    0.000018           9         2           open
+  0.00    0.000013          13         1           munmap
+  0.00    0.000009           5         2           close
+  0.00    0.000009           9         1         1 access
+  0.00    0.000008           8         1           execve
+  0.00    0.000006           6         1           brk
+  0.00    0.000004           4         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    5.504744                960895         1 total
+
+-----------------
+The following is the result from the process using tr2u:
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 57.44   56.716654           6   9907360           write
+ 42.56   42.029776           4   9907362           read
+  0.00    0.000084          12         7           mmap
+  0.00    0.000060          15         4           mprotect
+  0.00    0.000029          15         2           open
+  0.00    0.000023          23         1           munmap
+  0.00    0.000015           8         2           fstat
+  0.00    0.000014           7         2           close
+  0.00    0.000014          14         1         1 access
+  0.00    0.000013          13         1           execve
+  0.00    0.000007           2         4           brk
+  0.00    0.000007           7         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   98.746696              19814747         1 total
+
+-----------------
+Using the time command on Linux I compared the time each program
+took to translate and copy the same amount of data(which also was
+the check file used above).
+
+tr2b
+
+real  0m0.941s
+user  0m0.745s
+sys   0m0.025s
+
+tr2u
+
+real  0m24.733s
+user  0m6.322s
+sys   0m18.278s
+
+==========================================
+                  report.txt
+==========================================
+
+The following are the performance difference between
+sfrobu and sfrob.
+
+Each result was produced by using the file 'input'
+containing:
+
+*~BO *{_CIA *hXE]D *LER #@_GZY #E\\OX #^BO #FKPS #NEM\4
+
+and the following command:
+
+time shuf -r -n (Number of Lines) < input | ./sfrobu 1>/dev/null
+time shuf -r -n (Number of Lines) < input | ./sfrob 1>/dev/null
+
+-----------------
+
+sfrobu
+
+0 lines
+
+real    0m0.014s
+user    0m0.000s
+sys     0m0.006s
+
+10 lines
+
+real    0m0.005s
+user    0m0.001s
+sys     0m0.006s
+
+100 lines
+
+real    0m0.017s
+user    0m0.008s
+sys     0m0.009s
+
+1000 lines
+
+real    0m0.129s
+user    0m0.059s
+sys     0m0.066s
+
+10000 lines
+
+real    0m1.047s
+user    0m0.434s
+sys     0m0.621s
+
+100000 lines
+
+real    0m6.474s
+user    0m2.717s
+sys     0m3.824s
+
+-----------------
+
+sfrob
+
+0 lines
+
+real    0m0.004s
+user    0m0.000s
+sys     0m0.005s
+
+10 lines
+
+real    0m0.004s
+user    0m0.002s
+sys     0m0.004s
+
+100 lines
+
+real    0m0.008s
+user    0m0.002s
+sys     0m0.006s
+
+1000 lines
+
+real    0m0.020s
+user    0m0.016s
+sys     0m0.005s
+
+10000 lines
+
+real    0m0.169s
+user    0m0.163s
+sys     0m0.015s
+
+100000 lines
+
+real    0m1.305s
+user    0m1.286s
+sys     0m0.095s
+
+-----------------
+
+Using spreadsheets, I found the best-fit equation
+for the CPU time cost as a function of the number
+of input lines.
+
+-----------------
+
+sfrobu
+
+f(N) = 1.47E-04N^0.86
+
+-----------------
+
+frob
+f(N) = 1.47E-04N^0.753
+
+-----------------
+

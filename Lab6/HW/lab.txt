@@ -1,0 +1,235 @@
+Name: Sungmin Cho
+UCID: 205124669
+Assignment 6
+Lab
+-----------------
+
+I compiled the simpgmp.c using the following command:
+
+gcc -lgmp simpgmp.c -o simpgmp
+
+
+-----------------
+
+I computed 2**24:
+
+./simpgmp 24
+
+for which the result came out to be:
+
+16777216
+
+I computed 2**(2**24) and counted characters using
+the following:
+
+./simpgmp $(./simpgmp 24) | tr -cd [:digit:] | wc -c
+
+outputing the following:
+
+5050446
+
+The top 4 characters were found by using
+the following:
+
+./simpgmp $(./simpgmp 24) | tr -cd [:digit:] | head -c4
+
+resulting in the following:
+
+1818
+
+The last four were found by using
+the following:
+
+./simpgmp $(./simpgmp 24) | tr -cd [:digit:] | tail -c4
+
+7536
+
+-----------------
+
+The following was the ouput of the ldd command on ./simpgmp
+
+	linux-vdso.so.1 =>  (0x00007ffee4dca000)
+	libgmp.so.10 => /lib64/libgmp.so.10 (0x00007fd108c36000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007fd108868000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fd108eae000)
+
+simpgmp accesses libraries linux-vdso.so.1, libgmp.so.10,
+libc.so.6, and /lib64/ld-linux-x86-64.so.2
+
+-----------------
+
+When I ran
+
+strace ./simpgmp 24 2>>lab.txt
+
+I got the following as an output:
+
+execve("./simpgmp", ["./simpgmp", "24"], [/* 33 vars */]) = 0
+brk(NULL)                               = 0x1c3a000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fc7cd259000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=158997, ...}) = 0
+mmap(NULL, 158997, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7fc7cd232000
+close(3)                                = 0
+open("/lib64/libgmp.so.10", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\200\304\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=495720, ...}) = 0
+mmap(NULL, 2584736, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fc7ccdc1000
+mprotect(0x7fc7cce37000, 2093056, PROT_NONE) = 0
+mmap(0x7fc7cd036000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x75000) = 0x7fc7cd036000
+close(3)                                = 0
+open("/lib64/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P&\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=2156072, ...}) = 0
+mmap(NULL, 3985888, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fc7cc9f3000
+mprotect(0x7fc7ccbb6000, 2097152, PROT_NONE) = 0
+mmap(0x7fc7ccdb6000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1c3000) = 0x7fc7ccdb6000
+mmap(0x7fc7ccdbc000, 16864, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7fc7ccdbc000
+close(3)                                = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fc7cd231000
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fc7cd22f000
+arch_prctl(ARCH_SET_FS, 0x7fc7cd22f740) = 0
+mprotect(0x7fc7ccdb6000, 16384, PROT_READ) = 0
+mprotect(0x7fc7cd036000, 8192, PROT_READ) = 0
+mprotect(0x600000, 4096, PROT_READ)     = 0
+mprotect(0x7fc7cd25a000, 4096, PROT_READ) = 0
+munmap(0x7fc7cd232000, 158997)          = 0
+brk(NULL)                               = 0x1c3a000
+brk(0x1c5b000)                          = 0x1c5b000
+brk(NULL)                               = 0x1c5b000
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 24), ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7fc7cd258000
+write(1, "16777216\n", 9)               = 9
+exit_group(0)                           = ?
++++ exited with 0 +++
+
+-----------------
+
+Below are the calls used to dynamically link the libgmp.so.10 library:
+
+open("/lib64/libgmp.so.10", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\200\304\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=495720, ...}) = 0
+mmap(NULL, 2584736, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fc7ccdc1000
+mprotect(0x7fc7cce37000, 2093056, PROT_NONE) = 0
+mmap(0x7fc7cd036000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x75000) = 0x7fc7cd036000
+close(3)                                = 0
+
+-----------------
+
+Below are the calls used to dynamically link the /lib64/libc.so.6 library:
+
+open("/lib64/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P&\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=2156072, ...}) = 0
+mmap(NULL, 3985888, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7fc7cc9f3000
+mprotect(0x7fc7ccbb6000, 2097152, PROT_NONE) = 0
+mmap(0x7fc7ccdb6000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1c3000) = 0x7fc7ccdb6000
+mmap(0x7fc7ccdbc000, 16864, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7fc7ccdbc000
+close(3)                                = 0
+
+-----------------
+
+The open call opens up the file where the second argument checks the accessibility of the file.
+
+The read and fstat call obtains the information about the library.
+
+The mmap establishes the memory mapping of the library.
+
+The mprotect call establishes the protection status of the memory.
+
+The close call closes the file.
+
+-----------------
+
+running the following command:
+
+ls /usr/bin | awk '(NR-205124669)%251 == 0'
+
+I got the following output:
+
+cat
+dwz
+grub2-mkimage
+jstack
+lslogins
+ocs
+ppdc
+shcomp
+updatedb
+
+-----------------
+
+I wrote the following shell script to carry out step 6, and 7 of the lab:
+
+#! /bin/env bash
+
+export LC_ALL='C'
+
+for bin in $(ls /usr/bin | awk '(NR-205124669)%251 == 0')
+do
+    ldd "/usr/bin/${bin}" >> output
+done
+
+sed -E 's/ =>.*|\(.*\)//g' output | sort -u
+
+-----------------
+
+running the above script, I obtained the following
+output:
+
+	/lib64/ld-linux-x86-64.so.2 
+	libattr.so.1
+	libaudit.so.1
+	libavahi-client.so.3
+	libavahi-common.so.3
+	libbz2.so.1
+	libc.so.6
+	libcap-ng.so.0
+	libcap.so.2
+	libcom_err.so.2
+	libcrypt.so.1
+	libcrypto.so.10
+	libcups.so.2
+	libcupsppdc.so.1
+	libdbus-1.so.3
+	libdevmapper.so.1.02
+	libdl.so.2
+	libdw.so.1
+	libelf.so.1
+	libfreebl3.so
+	libgcc_s.so.1
+	libgcrypt.so.11
+	libgpg-error.so.0
+	libgssapi_krb5.so.2
+	libjli.so
+	libk5crypto.so.3
+	libkeyutils.so.1
+	libkrb5.so.3
+	libkrb5support.so.0
+	liblz4.so.1
+	liblzma.so.5
+	libm.so.6
+	libpcre.so.1
+	libpthread.so.0
+	libresolv.so.2
+	librt.so.1
+	libselinux.so.1
+	libsepol.so.1
+	libsmartcols.so.1
+	libssl.so.10
+	libstdc++.so.6
+	libsystemd.so.0
+	libudev.so.1
+	libutil.so.1
+	libz.so.1
+	linux-vdso.so.1
+	not a dynamic executable
+
+-----------------
+
+/usr/bin/ocs output an error message 'not a dynamic executable'.
+
+This is because the program does not use a dynamic linking.
+

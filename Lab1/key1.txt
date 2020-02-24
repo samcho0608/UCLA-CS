@@ -1,0 +1,115 @@
+Sungmin Cho
+205124669
+Assignment 1
+Lab 1
+------------
+
+Exercise 1.1
+
+2. C-M-s H T M L Enter
+
+3. M-> C-r s c a v e n g e r Enter
+
+4. M-> C-r s e l f - r e f e r e n t i a l Enter
+
+5. M-> C-r a r r o w Enter
+
+6. C-e
+
+7. C-a
+
+9. No arrow keys used to move the cursor.
+
+10. C-x C-c
+
+
+Exercise 1.2
+
+2. M-g g 1 9 C-k
+
+3. C-M-s - M E C-a C-k
+
+4. C-M-s # C o m m e n t s C-M-s M-h C-w
+
+5. C-M-s < ! C-M-r M-z >
+   C-n C-a C-SPC C-M-s - - > Enter C-w
+   C-M-s < ! C-a C-k
+
+Exercise 1.3
+
+2. M-% A s s i g n m e n t SPC 1 Enter A s s i g n m e n t SPC 4 2 Enter SPC SPC Enter
+
+3. M-< M-% U T F - 8 Enter U S - A S C I I Enter SPC Enter
+
+4. M-< C-M-s [ ^ [ : a s c i i : ] ] C-a C-k
+
+5. M-< C-M-s < / o l > C-o
+
+6. C-x C-c
+
+Exercise 1.4
+
+3. M-> C-M-r < C-SPC C-e M-w M-g g 4 4 8 C-y C-o
+  
+4. M-> C-M-r < ! C-M-r C-SPC C-M-s - - > M-w M-g g 4 3 0 Enter C-y C-a DEL UP DEL UP DEL
+   M-> C-M-r < ! - - - C-SPC C-M-s > M-w M-g g 4 2 9 Enter C-M-s n g Enter C-y
+   M-> C-M-r w i k Enter C-M-r < ! C-SPC C-M-s - > Enter M-w M-g g 3 8 7 Enter C-y C-o C-o C-a DEL UP DEL
+   M-> C-M-r D E Enter C-M-r < C-SPC C-e M-w M-g g 1 3 1 Enter C-y
+   M-> M-> C-M-r [ ^ [ : a s c i i : ] ] C-a C-f C-SPC C-e M-w M-g g 1 9 Enter C-y
+   
+5. M-> C-SPC C-M-r - - - SPC Enter C-w
+
+6. C-/
+
+7. M-> C-SPC C-M-r - - - SPC Enter M-;
+
+8. There were total 7 instances.
+   M-x h o w - m a n y < o l >
+   M-< M-% < o l > Enter < o L > Enter ! 
+
+9. The only difference is the replaced <oL>s and the commented section at the bottom.
+
+Exercise 1.5
+
+1. M-! m k d i r SPC ~ / j u n k Enter 
+
+2. M-! touch ~/junk/hello.c
+
+3. M-x compile Enter g c c SPC - o h e l l o SPC ~ / j u n k / h e l l o . c
+
+4. C-x b h e l l o - o u t Enter C-u M-! ./hello Enter
+
+5. EOF on input
+   C-x k h e l l o - o u t Enter C-y
+
+Exercise 1.6
+
+1. C-x b * s c r a t c h * Enter
+
+2. m o s t - n e g a t i v e - f i x n u m C-j
+     The value was -2305843009213693952
+     In hex format, "2000000000000000"
+   m o s t - p o s i t i v e - f i x n u m C-j
+     The value was 2305843009213693951
+     In hex format, "1fffffffffffffff"
+   Using the 64-bit machine, Emacs employs the 62 bits of it to express a number, hence why the above numbers are shown(the other 2 bits are likely used for other information).
+
+
+
+3. ( r a n d o m  SPC " 2 0 5 - 1 2 4 - 6 6 9 " ) C-j
+   5316562725552849
+
+4. ( s e t q SPC x SPC ( r a n d o m ) ) C-j
+   ( s e t q SPC y SPC ( r a n d o m ) ) C-j
+   The value of variable x is 512606403704330205.
+   The value of variable y is -1633034394797665361.
+
+5. ( s e t q SPC p SPC ( * SPC x SPC y ) ) C-j
+   ( s e t q SPC r SPC ( l o g i o r SPC p SPC m o s t - p o s i t i v e - f i x n u m) ) C-j
+   The value of variable p is -562010650627426541.
+   The value of variable r is -562010650627426541.
+
+7. The two integers x and y are not truly random because we set a seed, resulting in producing specific values designated for the seed rather than an actually random number.
+
+8. There are total 62 bits used to represent numbers. With this information and with the information from part 2, the representable number ranges from -(2^61) to (2^61)-1. There are total 4 different possible special cases where overflow could happen: x > (2^31) and y > (2^31), x < -(2^31) and y > (2^31), x > (2^31) and y < -(2^31), and x < -(2^31) and y < -(2^31). These do not show all probability of the overflow but can be used as the lower bound of it.
+ P(x > 2^31) can be calculated using 1/2 - 2^31/2^62. where 1/2 is only the positive side. This then estimates to be 1/2. P(x > 2^31) = P(y > 2^31). The same logic can be used for x < -(2^31) and y  < -(2^31), both resulting in estimated value of 1/2. Thus each of the 4 special cases to have the estimated probability of 1/4, because P(A and B) = P(A) * P(B) when A and B are independent of each other. In total, the P(r is not the mathematically correct product of the two integers) estimates to be 1, which is 4 * 1/4. Thus, the complement of that value, the probability of r's value being the mathematically correct product of the two integers is estimated to be 0, or nearly impossible.

@@ -1,0 +1,12 @@
+#! /bin/env bash
+
+export LC_ALL='C'
+
+rm output
+
+for bin in $(ls /usr/bin | awk '(NR-205124669)%251 == 0')
+do
+    ldd "/usr/bin/${bin}" >> output
+done
+
+sed -E 's/ =>.*|\(.*\)//g' output | sort -u

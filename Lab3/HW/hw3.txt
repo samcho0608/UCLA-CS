@@ -1,0 +1,70 @@
+Sungmin Cho
+205124669
+Assignment 3
+Homework
+--------------
+
+Q1.
+
+Patch: case 'A': 
+- if (ignore_mode == IGNORE_DEFAULT) 
+-     ignore_mode = IGNORE_DOT_AND_DOTDOT; 
++ ignore_mode = IGNORE_DOT_AND_DOTDOT; break;
+
+The patch showed that the if statement was removed and the variable
+ignore_mode will always be assigned IGNORE_DOT_AND_DOTDOT; This means
+there are less operations because the program doesnot need to check
+the conditional statement.
+
+--------------
+
+Q2.
+
+Because shell scripts depends on the usage of shell commands, if there
+was an application installed that utilized this specific function of
+the command ls, it may run into an issue since the output from the ls
+command will be different.
+
+--------------
+
+Q3.
+
+When an empty file like /dev/null is passed in as an input for the
+Python 2 script randline.py, the following error shows up:
+
+Traceback (most recent call last): File "./randline.py", line 70, in
+  <module> main() File "./randline.py", line 64, in main
+  sys.stdout.write(generator.chooseline()) File "./randline.py", line
+  34, in chooseline return random.choice(self.lines) File
+  "/usr/lib64/python2.7/random.py", line 274, in choice return
+  seq[int(self.random() * len(seq))] # raises IndexError if seq is
+  empty IndexError: list index out of range
+
+Explanation: The program randline.py opens and reads the lines inside
+to extract a randome line, thus the variable which stores the lines,
+self.lines, is empty. According to the error above, random.choice
+raises error when the input is empty, which makes sense because one
+cannot extract a random line from file that does not have any line.
+
+--------------
+
+Q4.
+
+When passed in as an argument of randline.py, /dev/null results in the
+following error:
+
+  File "randline.py", line 65 except IOError as (errno, strerror): ^
+    SyntaxError: invalid syntax
+
+This happens because Python 3, which is a more recent version of
+python, supports a few different syntax from that of Python 2. In
+other words, Python 3 is not compatible with Python 2 code.
+
+--------------
+
+Q5.
+
+My shuf.py script works just fine when run with Python 2 instead of
+Python 3. According to my online research, this is because the later
+version of Python 2, recognizing the increase in the usage of Python
+3, adopted Python 3 extensions and such.

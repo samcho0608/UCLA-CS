@@ -1,0 +1,163 @@
+BName: Sungmin Cho
+UCID: 205124669
+Assignment 2
+Lab
+___________________
+
+1. The example tr commands
+tr -c 'A-Za-z' '[\n*]': translated all the complements of alphabets into a newline character.
+
+tr-cs 'A-Za-z' '[\n*]': squeezed the output of the above command.
+
+tr -cs 'A-Za-z' '[\n*]' | sort: alphabetically sorted the output of the above command.
+
+tr -cs 'A-Za-z' '[\n*]' | sort -u: deleted all the repetitions of found words except one(making all the words unique).
+
+tr -cs 'A-Za-z' '[n*]' | sort -u | comm - words: compares the output from the above command(herein referred to as HTML output) and makes a three-column output where the first column contains lines unique to the HTML output, second column contains lines unique to the words file, and the third column contains lines common to both.
+
+tr -cs 'A-Za-z' '[n*]' | sort -u | comm -23 - words: only prints out the first column of the above output, which are the lines unique to the HTML output.
+
+___________________
+
+2. log of experiments with lab
+
+In order to remove all instances of '?', '<u>', '</u>' and '<br>', I used the following sed command.
+
+      sed -E 's/\?|<u>|</u>|<br>//g' $1
+
+which resulted in the following error message.
+
+      sed: -e expression #1, char 20: unknown option to `s'
+
+To fix this, I changed the command to the following:
+
+      sed -E 's/\?|<u>|</u>|<br>//g' $1
+
+which successfully deleted the aforementioned regular expressions.
+
+___________________
+
+In order to remove \n from English lines, I used the following command twice(because of the English definitions that had more than one newline character):
+      sed -E '/[^>]$/{N; s/\n//;}'
+
+___________________
+
+In order to extract all lines with <td> tags, I used the following command:
+
+grep -E "<td>" 
+
+Even though this command did give extract all lines with <td> tags, it did not extract any lines that had <td> tags with extra characters after 'td'. To fix this issue and correctly extract all lines that were necessary, I used the following command.
+
+grep -E "<td[^>]*>"
+
+___________________
+
+The HTML lines at the top did not necessarily have a pattern so instead I decided to delete the number of lines at the top that were not needed for our purpose. To do so, I used the following command:
+
+sed '1,4d'
+
+which deleted the top four lines of the outcome from the previous command.
+
+___________________
+
+The English lines occurred every other line so I employed the sed command with a tilda:
+
+sed '1~2d'
+
+However, not knowing how sed worked exactly with this command, using this command resulted in deleting all the Hawaiian lines.
+
+sed '2-2d'
+
+This command deletes the second line and every other line from it, resulting in only Hawaiian lines.
+
+___________________
+
+The following command was utilized to remove all the tags.
+
+sed -E 's/<*.>//g'
+
+This line resulted in deleting all characters in all lines because '*.' included '>' character, too. To fix this issue, I implemented the following command:
+
+sed -E 's/<[^>]*>//g'
+
+which successfully deleted all the tags.
+
+___________________
+
+I translated all \` characters with \' characters using the tr command.
+
+tr \` \'
+
+___________________
+
+I made everything lowercase also using the tr command.
+
+tr [:upper:] [:lower:]
+
+___________________
+
+I translated comma, space, and dash with newline using the tr command.
+
+tr [, \-] '\n'
+
+___________________
+
+In attempts to delete all leftover empty lines, I used the sed command.
+
+sed -E 's/^$//g'
+
+This command resulted in basically not changing anything.
+
+sed '/^$/d'
+
+This command actually deleted all the empty lines.
+
+___________________
+
+I employed the sed command to get rid of all non-Hawaiian characters.
+
+sed -E 's/[^pk\'mnwlhaeiou]//g'
+
+but it kept on asking for extra inputs due to the way single quotes work. Thus I used the following command to successfully include ' character within the brackets.
+
+sed -E "s/[^pk\'mnwlhaeiou]//g"
+
+___________________
+
+To get rid of all the duplicates, I used sort -u
+
+sort -u
+
+___________________
+
+3. HAWAIIANCHECKER
+
+I derived the following command from the ENGLISHCHECKER
+
+tr -cs "A-Z'a-z" '[\n*]' | sort -u | comm -23 - hwords
+
+According to the HAWAIIANCHECKER, there were total of 611 misspelled words on this web page whereas according to the ENGLISHCHECKER, there were total of 94 misspelled words.
+
+___________________
+
+I used the following commands to save each case shown by ENGLISHCHECKER and HAWAIIANCHECKER to compare each cases.
+
+cat assign2.html | tr -cs "A-Z'a-z" '[\n*]' | sort -u | comm -12 - hwords > hRight
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm -23 - words > engWrong
+
+comm -12 hRight engWrong
+
+The following are the two words correctly spelled in Hawaiian but misspelled in English:
+
+lau
+wiki 
+
+cat assign2.html | tr -cs "A-Z'a-z" '[\n*]' | sort -u | comm -23 - hwords > hWrong
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm -12 - words > engRight
+
+comm -12 hWrong engRight
+
+There are 503 words spelled correctly in English but misspelled in Hawaiian. The two examples of such are the following:
+
+you
+zero

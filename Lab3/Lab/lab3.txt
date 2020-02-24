@@ -1,0 +1,74 @@
+Sungmin Cho
+205124669
+Assignment 3
+Lab 
+-------------
+
+1.
+
+I ran the given code from the course website and obtained the following output:
+
+gpg: Signature made Wed Dec 27 10:29:05 2017 PST using RSA key ID 306037D9 gpg:
+Good signature from "Pádraig Brady <P@draigBrady.com>" gpg: aka "Pádraig Brady
+<pbrady@redhat.com>" gpg: aka "Pádraig Brady <pixelbeat@gnu.org>" gpg: WARNING:
+This key is not certified with a trusted signature!  gpg: There is no
+indication that the signature belongs to the owner.  Primary key fingerprint:
+6C37 DC12 121A 5006 BC1D B804 DF6F D971 3060 37D9
+
+-------------
+
+2.
+
+I first ran ./configure
+-prefix=/u/eng/class/classnho/CS35L/Lab3/Lab/coreutilsinstall.  But I did not
+see any file created within the specified directory.
+
+I then ran make and make install under coreutils-8.29 then finally got all the
+necessary files.
+
+-------------
+
+3.
+
+To check what the error was, I tested the following line:
+
+./ls -aA 
+./ls -Aa 
+./ls -aA ..  
+./ls -Aa ..
+
+All the of the above codes produced output containing '.' and '..'.
+
+-------------
+
+4.
+
+I used the following code to patch:
+
+patch -p1 <patchfile
+
+-------------
+
+5. 
+
+I used the command make but it did not introduce any changes. I think this is
+due to the fact that make built the file but did not execute the installment of
+the updated coreutils. 
+
+I had to use make install to have the update be installed and applied to
+coreutils.
+
+-------------
+
+6.
+
+I checked the newly updated ls using the same tests as above:
+
+./ls -aA 
+./ls -Aa 
+./ls -aA ..  
+./ls -Aa ..
+
+Whenever -a was called after -A, the output included '.' and '..' whereas they
+were not included when the commands were called the other way around. This
+shows that the later-called argument overrides the previously-called argument.

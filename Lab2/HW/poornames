@@ -1,0 +1,66 @@
+#! /bin/env bash
+
+export LC_ALL='C'
+
+validArgument () {
+    # if the first input begins with '-'
+    if [[ $1 =~ ^- ]]; then
+	echo "First character is \-" >&2
+	exit 1;
+    # else if the input is not a directory or is a soft link
+    elif [ ! -d $1 ] || [ -L $1 ]; then
+	echo "Not a directory" >&2
+	exit 1;
+    elif [ ! -r $1 ]; then
+        echo "Lacking reading permission" >&2
+        exit 0;
+    else
+	return 0
+    fi
+}
+
+# recursion is false
+recursion=1
+
+# check the input
+case $# in
+0) # if no input
+	dir='.'
+	;;
+1) # if there is a single input
+	if test $1 == '-r'; then
+	    dir='.'
+	elif validArgument $1; then
+	    dir=$1
+	fi
+	;;
+*) # if there are more than 1 inputs
+	if test $1 == '-r'; then
+	    if validArgument $2; then
+		dir=$2
+		# recursion is true
+		recursion=0
+	    fi
+	elif test $# > 2; then
+	    echo "too many arguments" >&2
+	    exit 1
+	fi  
+esac
+
+findPoorName () {
+    if [ $2 == 1 ]; then
+	find -H $1 -maxdepth 1 |
+	grep -E "/([-.]|[^/]*([^-_.a-zA-Z/]|[^/]{15}))[^/]*$" #|
+	# excludes all the files that end with . or .. (exception was found with ../..)
+	#grep -Ev "\/\.{1,2}$"
+	find -H $1 -maxdepth 1 | sort | uniq -iD
+    else
+	find -H $1 -type d -exec $0 {} ';'
+    fi
+}
+
+export IFS=$'\n'
+
+ls -pd $(findPoorName $dir $recursion | sort -u) |
+
+sed -E 's/\/\/$/\//g'
