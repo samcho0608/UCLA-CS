@@ -1,4 +1,4 @@
-Bcommit 487e009ed7294021dcc0b66c2b5a5046aea51ab4
+commit 487e009ed7294021dcc0b66c2b5a5046aea51ab4
 Author: Jim Meyering <meyering@fb.com>
 Date:   Sun May 21 15:27:10 2017 -0700
 
